@@ -72,6 +72,34 @@ table {
 	padding-bottom: 30px;
 }
 
+#c404 {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+
+	color: #FFF;
+	font-family: Lato;
+	text-align: center;
+}
+
+#c404 h1 {
+	font-size: 10em;
+	padding: 0.6em;
+}
+
+#c404 a {
+	font-size: 1em;
+	color: #CCC;
+	font-family: Arial;
+}
+
+#c404 a:hover {
+	color: #FFF;
+	font-family: Arial;
+}
+
 .social-icon {
 	width: 40px;
 	height: 40px;
