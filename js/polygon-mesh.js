@@ -38,19 +38,24 @@ $(document).ready(function() {
 				};
 	})();
 
-	var meshWidth = 0
-	, meshHeight = 0
+	var meshWidth = $(window).width()
+	, meshHeight = $(window).height()
+	, meshRatio
 	, expandCanvasToWindow
-	, render
+	, createPoints
+	, paint
 	, ctx
 	, pointArr = []
-	, pointsNum = 15
-	, gradient
+	, pointsNum = 200
+	, pointsNumX
+	, pointsNumY
 	, maxRadius = 20
 	, minRadius = 5
 	, maxRotationRate = 0.03
 	, hue = 250
-	, gradientColor;
+	, hueRate = 0.1
+	, gradient
+	, gradientColor
 
 	expandCanvasToWindow = function() {
 		meshWidth = $(window).width();
@@ -59,36 +64,53 @@ $(document).ready(function() {
 		$('#mesh').attr('width', meshWidth);
 		$('#mesh').attr('height', meshHeight);
 
-		for(var x=0;x<pointsNum+1;x++) {
-		for(var y=0;y<pointsNum+1;y++) {
-			pointArr[x][y].x = x * (meshWidth / pointsNum);
-			pointArr[x][y].y = y * (meshHeight / pointsNum);
-		}
-		}
-
+		createPoints();
 	};
 
-	for(var x=0;x<pointsNum+1;x++) {
-		pointArr[x] = [];
-	for(var y=0;y<pointsNum+1;y++) {
-		pointArr[x].push({
-			x: x * (meshWidth / pointsNum),
-			y: y * (meshHeight / pointsNum),
-			rx: this.x,
-			ry: this.y,
-			radius: minRadius + Math.random() * (maxRadius - minRadius),
-			radians: Math.random() * (Math.PI * 2),
-			rotationRate: Math.random() * (maxRotationRate*2) - maxRotationRate,
-			move: function() {
-				this.radians = (this.radians + this.rotationRate) % (Math.PI * 2);
+	createPoints = function() {
+		meshRatio = meshHeight/meshWidth;
 
-				this.rx = this.x + this.radius * Math.cos(this.radians);
-				this.ry = this.y + this.radius * Math.sin(this.radians);
+		pointsNumX = Math.ceil(Math.sqrt(pointsNum/meshRatio));
+		pointsNumY = Math.ceil(pointsNum / Math.sqrt(pointsNum/meshRatio));
+
+		for(var x=0;x<pointsNumX+1;x++) {
+			pointArr[x] = [];
+		for(var y=0;y<pointsNumY+1;y++) {
+			var tempRadius
+			, tempRadians
+			, tempRotationRate;
+
+			if(x*y == 0 || x == pointsNumX || y == pointsNumY) {
+				tempRadius = 0;
+				tempRadians = 0;
+				tempRotationRate = 0;
 			}
-		});
-	}
-	}
+			else {
+				tempRadius = minRadius + Math.random() * (maxRadius - minRadius);
+				tempRadians = Math.random() * (Math.PI * 2);
+				tempRotationRate = Math.random() * (maxRotationRate*2) - maxRotationRate;
+			}
 
+			pointArr[x].push({
+				x: x * (meshWidth / Math.sqrt(pointsNum/meshRatio)),
+				y: y * (meshHeight / (pointsNum / Math.sqrt(pointsNum/meshRatio))),
+				rx: x * (meshWidth / Math.sqrt(pointsNum/meshRatio)),
+				ry: y * (meshHeight / (pointsNum / Math.sqrt(pointsNum/meshRatio))),
+				radius: tempRadius,
+				radians: tempRadians,
+				rotationRate: tempRotationRate,
+				move: function() {
+					this.radians = (this.radians + this.rotationRate) % (Math.PI * 2);
+
+					this.rx = this.x + this.radius * Math.cos(this.radians);
+					this.ry = this.y + this.radius * Math.sin(this.radians);
+				}
+			});
+		}
+		}
+	};
+
+	createPoints();
 	expandCanvasToWindow();
 
 	$(window).resize(function() {
@@ -97,14 +119,14 @@ $(document).ready(function() {
 
 	ctx = document.getElementById('mesh').getContext('2d');
 
-	render = function() {
-		ctx.fillStyle = 'hsla('+Math.round(hue)+', 10%, 10%, 1)';
+	paint = function() {
+		ctx.fillStyle = 'hsla(' + Math.round(hue) + ', 10%, 10%, 1)';
 		ctx.fillRect(0, 0, meshWidth, meshHeight);
 
-		hue = hue + 0.1 % 360;
+		hue = hue + hueRate % 360;
 
-		for(var x=0;x<pointsNum+1;x++) {
-		for(var y=0;y<pointsNum+1;y++) {
+		for(var x=0;x<pointsNumX+1;x++) {
+		for(var y=0;y<pointsNumY+1;y++) {
 			pointArr[x][y].move();
 
 			if(x > 0 && y > 0) {
@@ -154,9 +176,7 @@ $(document).ready(function() {
 	};
 
 	(function animationloop(){
-      render();
+      paint();
       requestAnimFrame(animationloop);
     })();
-
-
 });

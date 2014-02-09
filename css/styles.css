@@ -25,7 +25,6 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
-	overflow: hidden;
 }
 ol, ul {
 	list-style: none;
@@ -45,6 +44,12 @@ table {
 
 /*/////////////////////////////////////////////////*/
 
+#mesh {
+	position: fixed;
+	left: 0px;
+	top:0px;
+}
+
 #container {
 	position: absolute;
 	left: 0;
@@ -59,12 +64,12 @@ table {
 
 #container h1 {
 	font-size: 3em;
-	border-bottom: 1px solid #FFF;
 	padding: 0.7em;
 }
 
 #container p {
 	font-size: 1em;
+	border-top: 1px solid #FFF;
 	border-bottom: 1px solid #FFF;
 	padding: 10px;
 	margin-bottom: 30px;
