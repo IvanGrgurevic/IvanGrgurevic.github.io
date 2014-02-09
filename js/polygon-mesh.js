@@ -86,7 +86,7 @@ $(document).ready(function() {
 				tempRotationRate = 0;
 			}
 			else {
-				tempRadius = minRadius + Math.random() * (maxRadius - minRadius);
+				tempRadius = Math.random() * ((meshWidth / Math.sqrt(pointsNum/meshRatio))/4);
 				tempRadians = Math.random() * (Math.PI * 2);
 				tempRotationRate = Math.random() * (maxRotationRate*2) - maxRotationRate;
 			}
@@ -130,7 +130,7 @@ $(document).ready(function() {
 			pointArr[x][y].move();
 
 			if(x > 0 && y > 0) {
-				gradientColor = (Math.round(hue+(-y-x)*4) % 360) + ', 50%, 40%';
+				gradientColor = (Math.round(hue+(-y-x)*3) % 360) + ', 50%, 40%';
 
 				gradient = ctx.createLinearGradient(
 					pointArr[x-1][y-1].rx
