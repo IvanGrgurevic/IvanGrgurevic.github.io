@@ -28,10 +28,10 @@
 
 
     var positionContent = function() {
-      $('#position').css('margin-top', $(window).height()/2 - $('#position').height());
+      $('#container').css('margin-top', $(window).height()/2 - $('#container').height());
     }
 
-    $('#position').ready(function() {
+    $('#container').ready(function() {
       positionContent();
     });
 
@@ -46,12 +46,10 @@
   <canvas id="mesh"></canvas>
 
   <div id="container">
-    <div id="position">
       <h1><span class="boldFont">Ivan<span> <span class="thinFont">Grgurevic</span></h1>
       <a href="https://github.com/IvanGrgurevic" target="_blank"><img class="social-icon" src="images/github.png" /></a>
       <a href="http://www.linkedin.com/in/ivangrgurevic" target="_blank"><img class="social-icon" src="images/linkedin.png" /></a>
       <a href="https://twitter.com/IvanGrgurevic" target="_blank"><img class="social-icon" src="images/twitter.png" /></a>
-    </div>
   </div>
 </body>
 </html>

@@ -56,6 +56,10 @@ $(document).ready(function() {
 	, hueRate = 0.1
 	, gradient
 	, gradientColor
+	, x
+	, y
+	, xMinus
+	, yMinus;
 
 	expandCanvasToWindow = function() {
 		meshWidth = $(window).width();
@@ -73,9 +77,9 @@ $(document).ready(function() {
 		pointsNumX = Math.ceil(Math.sqrt(pointsNum/meshRatio));
 		pointsNumY = Math.ceil(pointsNum / Math.sqrt(pointsNum/meshRatio));
 
-		for(var x=0;x<pointsNumX+1;x++) {
+		for(x=0;x<pointsNumX+1;x++) {
 			pointArr[x] = [];
-		for(var y=0;y<pointsNumY+1;y++) {
+		for(y=0;y<pointsNumY+1;y++) {
 			var tempRadius
 			, tempRadians
 			, tempRotationRate;
@@ -125,16 +129,19 @@ $(document).ready(function() {
 
 		hue = hue + hueRate % 360;
 
-		for(var x=0;x<pointsNumX+1;x++) {
-		for(var y=0;y<pointsNumY+1;y++) {
+		for(x=0;x<pointsNumX+1;x++) {
+		for(y=0;y<pointsNumY+1;y++) {
 			pointArr[x][y].move();
 
 			if(x > 0 && y > 0) {
+				xMinus = x-1;
+				yMinus = y-1;
+
 				gradientColor = (Math.round(hue+(-y-x)*3) % 360) + ', 50%, 40%';
 
 				gradient = ctx.createLinearGradient(
-					pointArr[x-1][y-1].rx
-					, pointArr[x-1][y-1].ry
+					pointArr[xMinus][yMinus].rx
+					, pointArr[xMinus][yMinus].ry
 					, pointArr[x][y].x
 					, pointArr[x][y].y);
 
@@ -144,17 +151,17 @@ $(document).ready(function() {
 				ctx.fillStyle = gradient;
 				ctx.beginPath();
 
-				ctx.moveTo(pointArr[x-1][y-1].rx, pointArr[x-1][y-1].ry);
-				ctx.lineTo(pointArr[x][y-1].rx, pointArr[x][y-1].ry);
-				ctx.lineTo(pointArr[x-1][y].rx, pointArr[x-1][y].ry);
+				ctx.moveTo(pointArr[xMinus][yMinus].rx, pointArr[xMinus][yMinus].ry);
+				ctx.lineTo(pointArr[x][yMinus].rx, pointArr[x][yMinus].ry);
+				ctx.lineTo(pointArr[xMinus][y].rx, pointArr[xMinus][y].ry);
 
 				ctx.closePath();
 				ctx.fill();
 
 
 				gradient = ctx.createLinearGradient(
-					pointArr[x-1][y-1].x
-					, pointArr[x-1][y-1].y
+					pointArr[xMinus][yMinus].x
+					, pointArr[xMinus][yMinus].y
 					, pointArr[x][y].rx
 					, pointArr[x][y].ry);
 
@@ -164,19 +171,22 @@ $(document).ready(function() {
 				ctx.fillStyle = gradient;
 				ctx.beginPath();
 
-				ctx.moveTo(pointArr[x][y-1].rx, pointArr[x][y-1].ry);
+				ctx.moveTo(pointArr[x][yMinus].rx, pointArr[x][yMinus].ry);
 				ctx.lineTo(pointArr[x][y].rx, pointArr[x][y].ry);
-				ctx.lineTo(pointArr[x-1][y].rx, pointArr[x-1][y].ry);
+				ctx.lineTo(pointArr[xMinus][y].rx, pointArr[xMinus][y].ry);
 
 				ctx.closePath();
 				ctx.fill();
 			}
 		}
 		}
+
+		ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+		ctx.fillRect(0, 0, meshWidth, meshHeight);
 	};
 
 	(function animationloop(){
-      paint();
-      requestAnimFrame(animationloop);
-    })();
+		paint();
+		requestAnimFrame(animationloop);
+	})();
 });
