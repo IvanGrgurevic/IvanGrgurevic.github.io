@@ -55,7 +55,9 @@ $(document).ready(function() {
 	, hue = 250
 	, hueRate = 0.1
 	, gradient
-	, gradientColor
+	, gradientBaseColor
+	, gradientStartHSL
+	, gradientEndHSL
 	, x
 	, y
 	, xMinus
@@ -82,7 +84,9 @@ $(document).ready(function() {
 		for(y=0;y<pointsNumY+1;y++) {
 			var tempRadius
 			, tempRadians
-			, tempRotationRate;
+			, tempRotationRate
+			, tempX = x * (meshWidth / Math.sqrt(pointsNum/meshRatio))
+			, tempY = y * (meshHeight / (pointsNum / Math.sqrt(pointsNum/meshRatio)));
 
 			if(x*y == 0 || x == pointsNumX || y == pointsNumY) {
 				tempRadius = 0;
@@ -96,10 +100,10 @@ $(document).ready(function() {
 			}
 
 			pointArr[x].push({
-				x: x * (meshWidth / Math.sqrt(pointsNum/meshRatio)),
-				y: y * (meshHeight / (pointsNum / Math.sqrt(pointsNum/meshRatio))),
-				rx: x * (meshWidth / Math.sqrt(pointsNum/meshRatio)),
-				ry: y * (meshHeight / (pointsNum / Math.sqrt(pointsNum/meshRatio))),
+				x: tempX,
+				y: tempY,
+				rx: tempX,
+				ry: tempY,
 				radius: tempRadius,
 				radians: tempRadians,
 				rotationRate: tempRotationRate,
@@ -129,55 +133,48 @@ $(document).ready(function() {
 
 		hue = hue + hueRate % 360;
 
-		for(x=0;x<pointsNumX+1;x++) {
-		for(y=0;y<pointsNumY+1;y++) {
+		for(x=1;x<pointsNumX+1;x++) {
+		for(y=1;y<pointsNumY+1;y++) {
 			pointArr[x][y].move();
+			xMinus = x-1;
+			yMinus = y-1;
 
-			if(x > 0 && y > 0) {
-				xMinus = x-1;
-				yMinus = y-1;
+			gradientBaseColor = (Math.round(hue+(-y-x)*3) % 360) + ', 50%, 40%';
+			gradientStartHSL = 'hsla(' + gradientBaseColor + ', 1)';
+			gradientEndHSL = 'hsla(' + gradientBaseColor + ', 0)';
 
-				gradientColor = (Math.round(hue+(-y-x)*3) % 360) + ', 50%, 40%';
+			gradient = ctx.createLinearGradient(
+				pointArr[xMinus][yMinus].rx
+				, pointArr[xMinus][yMinus].ry
+				, pointArr[x][y].x
+				, pointArr[x][y].y);
+			gradient.addColorStop(0, gradientStartHSL);
+			gradient.addColorStop(1, gradientEndHSL);
 
-				gradient = ctx.createLinearGradient(
-					pointArr[xMinus][yMinus].rx
-					, pointArr[xMinus][yMinus].ry
-					, pointArr[x][y].x
-					, pointArr[x][y].y);
-
-				gradient.addColorStop(1, 'hsla(' + gradientColor + ',0)');
-				gradient.addColorStop(0, 'hsla(' + gradientColor + ',1)');
-
-				ctx.fillStyle = gradient;
-				ctx.beginPath();
-
-				ctx.moveTo(pointArr[xMinus][yMinus].rx, pointArr[xMinus][yMinus].ry);
-				ctx.lineTo(pointArr[x][yMinus].rx, pointArr[x][yMinus].ry);
-				ctx.lineTo(pointArr[xMinus][y].rx, pointArr[xMinus][y].ry);
-
-				ctx.closePath();
-				ctx.fill();
+			ctx.fillStyle = gradient;
+			ctx.beginPath();
+			ctx.moveTo(pointArr[xMinus][yMinus].rx, pointArr[xMinus][yMinus].ry);
+			ctx.lineTo(pointArr[x][yMinus].rx, pointArr[x][yMinus].ry);
+			ctx.lineTo(pointArr[xMinus][y].rx, pointArr[xMinus][y].ry);
+			ctx.closePath();
+			ctx.fill();
 
 
-				gradient = ctx.createLinearGradient(
-					pointArr[xMinus][yMinus].x
-					, pointArr[xMinus][yMinus].y
-					, pointArr[x][y].rx
-					, pointArr[x][y].ry);
+			gradient = ctx.createLinearGradient(
+				pointArr[xMinus][yMinus].x
+				, pointArr[xMinus][yMinus].y
+				, pointArr[x][y].rx
+				, pointArr[x][y].ry);
+			gradient.addColorStop(0, gradientStartHSL);
+			gradient.addColorStop(1, gradientEndHSL);
 
-				gradient.addColorStop(1, 'hsla(' + gradientColor + ',0)');
-				gradient.addColorStop(0, 'hsla(' + gradientColor + ',1)');
-
-				ctx.fillStyle = gradient;
-				ctx.beginPath();
-
-				ctx.moveTo(pointArr[x][yMinus].rx, pointArr[x][yMinus].ry);
-				ctx.lineTo(pointArr[x][y].rx, pointArr[x][y].ry);
-				ctx.lineTo(pointArr[xMinus][y].rx, pointArr[xMinus][y].ry);
-
-				ctx.closePath();
-				ctx.fill();
-			}
+			ctx.fillStyle = gradient;
+			ctx.beginPath();
+			ctx.moveTo(pointArr[x][yMinus].rx, pointArr[x][yMinus].ry);
+			ctx.lineTo(pointArr[x][y].rx, pointArr[x][y].ry);
+			ctx.lineTo(pointArr[xMinus][y].rx, pointArr[xMinus][y].ry);
+			ctx.closePath();
+			ctx.fill();
 		}
 		}
 
