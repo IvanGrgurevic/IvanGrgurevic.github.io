@@ -46,14 +46,13 @@ $(document).ready(function() {
 	, paint
 	, ctx
 	, pointArr = []
-	, pointsNum = 200
+	, pointsNum = (meshWidth*meshHeight)/(meshWidth+meshHeight)/3
 	, pointsNumX
 	, pointsNumY
-	, maxRadius = 20
-	, minRadius = 5
-	, maxRotationRate = 0.03
+	, minRotationRate = 0.03
+	, maxRotationRate = 0.05
 	, hue = 250
-	, hueRate = 0.1
+	, hueRate = 0.15
 	, gradient
 	, gradientColor
 	, x
@@ -92,7 +91,8 @@ $(document).ready(function() {
 			else {
 				tempRadius = Math.random() * ((meshWidth / Math.sqrt(pointsNum/meshRatio))/4);
 				tempRadians = Math.random() * (Math.PI * 2);
-				tempRotationRate = Math.random() * (maxRotationRate*2) - maxRotationRate;
+				tempRotationRate = minRotationRate + Math.random() * (minRotationRate - maxRotationRate)
+				tempRotationRate = ((Math.random() - 0.5) > 0) ? tempRotationRate : -1*tempRotationRate;
 			}
 
 			pointArr[x].push({
